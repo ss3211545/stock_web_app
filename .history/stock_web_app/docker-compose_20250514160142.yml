@@ -1,0 +1,134 @@
+version: '3.8'
+
+services:
+  # 后端API服务
+  backend:
+    build:
+      context: .
+      dockerfile: ./docker/backend.Dockerfile
+    container_name: stock_web_app_backend
+    restart: always
+    depends_on:
+      - postgres
+      - redis
+    environment:
+      - DB_HOST=postgres
+      - DB_NAME=stock_web_app
+      - DB_USER=postgres
+      - DB_PASSWORD=postgres
+      - DB_PORT=5432
+      - SECRET_KEY=your_secret_key_here
+      - JWT_SECRET_KEY=your_jwt_secret_key_here
+      - CELERY_BROKER_URL=redis://redis:6379/0
+      - CELERY_RESULT_BACKEND=redis://redis:6379/0
+    networks:
+      - stock_network
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./backend:/app
+      - ./data:/app/data
+
+  # Celery Worker服务
+  celery_worker:
+    build:
+      context: .
+      dockerfile: ./docker/backend.Dockerfile
+    container_name: stock_web_app_celery_worker
+    restart: always
+    depends_on:
+      - backend
+      - redis
+    environment:
+      - DB_HOST=postgres
+      - DB_NAME=stock_web_app
+      - DB_USER=postgres
+      - DB_PASSWORD=postgres
+      - DB_PORT=5432
+      - SECRET_KEY=your_secret_key_here
+      - JWT_SECRET_KEY=your_jwt_secret_key_here
+      - CELERY_BROKER_URL=redis://redis:6379/0
+      - CELERY_RESULT_BACKEND=redis://redis:6379/0
+    command: celery -A services.filter_service worker --loglevel=info
+    networks:
+      - stock_network
+    volumes:
+      - ./backend:/app
+      - ./data:/app/data
+
+  # 定时任务调度器
+  celery_beat:
+    build:
+      context: .
+      dockerfile: ./docker/backend.Dockerfile
+    container_name: stock_web_app_celery_beat
+    restart: always
+    depends_on:
+      - backend
+      - redis
+    environment:
+      - DB_HOST=postgres
+      - DB_NAME=stock_web_app
+      - DB_USER=postgres
+      - DB_PASSWORD=postgres
+      - DB_PORT=5432
+      - SECRET_KEY=your_secret_key_here
+      - JWT_SECRET_KEY=your_jwt_secret_key_here
+      - CELERY_BROKER_URL=redis://redis:6379/0
+      - CELERY_RESULT_BACKEND=redis://redis:6379/0
+    command: celery -A services.filter_service beat --loglevel=info
+    networks:
+      - stock_network
+    volumes:
+      - ./backend:/app
+      - ./data:/app/data
+
+  # 前端服务
+  frontend:
+    build:
+      context: .
+      dockerfile: ./docker/frontend.Dockerfile
+    container_name: stock_web_app_frontend
+    restart: always
+    ports:
+      - "80:80"
+    networks:
+      - stock_network
+    depends_on:
+      - backend
+
+  # PostgreSQL数据库
+  postgres:
+    image: postgres:13
+    container_name: stock_web_app_postgres
+    restart: always
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=stock_web_app
+    networks:
+      - stock_network
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+  # Redis缓存和消息队列
+  redis:
+    image: redis:6
+    container_name: stock_web_app_redis
+    restart: always
+    networks:
+      - stock_network
+    volumes:
+      - redis_data:/data
+    ports:
+      - "6379:6379"
+
+networks:
+  stock_network:
+    driver: bridge
+
+volumes:
+  postgres_data:
+  redis_data: 

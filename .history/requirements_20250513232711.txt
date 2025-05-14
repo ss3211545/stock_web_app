@@ -1,0 +1,5 @@
+requests>=2.25.0
+pandas>=1.2.0
+numpy>=1.19.0
+matplotlib>=3.3.0
+schedule>=1.0.0 

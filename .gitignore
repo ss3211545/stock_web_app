@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Python
 __pycache__/
 *.py[cod]
@@ -42,3 +43,7 @@ error.log
 # OS specific files
 .DS_Store
 Thumbs.db 
+=======
+# SpecStory explanation file
+.specstory/.what-is-this.md
+>>>>>>> aa5aa3044ff99e396c981bb42aab76931d61a807
