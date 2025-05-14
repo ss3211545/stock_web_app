@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>尾盘选股八大步骤</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/element-plus@2.3.8/dist/index.min.css" />
+    <script src="https://cdn.jsdelivr.net/npm/vue@3.2.37/dist/vue.global.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/element-plus@2.3.8/dist/index.full.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.0/dist/echarts.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios@0.27.2/dist/axios.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/socket.io-client@4.5.1/dist/socket.io.min.js"></script>
+    <style>
+        body {
+            font-family: "Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "微软雅黑", Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f5f7fa;
+            color: #303133;
+        }
+        #app {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .loading-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            flex-direction: column;
+        }
+        .loading-text {
+            margin-top: 20px;
+            font-size: 18px;
+            color: #409EFF;
+        }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <div v-if="!appLoaded" class="loading-container">
+            <el-image style="width: 120px; height: 120px" :src="'/static/images/loading.gif'" fit="contain"></el-image>
+            <div class="loading-text">尾盘选股八大步骤应用加载中...</div>
+        </div>
+        <div v-else>
+            <!-- 应用将在这里加载 -->
+        </div>
+    </div>
+
+    <script src="/static/js/app.js"></script>
+</body>
+</html> 
